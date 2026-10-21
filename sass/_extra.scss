@@ -1,0 +1,17 @@
+/******************************************************************************
+ *   Extra - Put your extra SASS/CSS here, it will get bundled with abridge.css
+ *****************************************************************************/
+
+// Self-host Yesteryear for the header title; keep article typography unchanged.
+@font-face {
+    font-family: "Yesteryear";
+    src: url("fonts/yesteryear/Yesteryear-Regular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+}
+
+.site-title {
+    font-family: "Yesteryear", cursive;
+    font-weight: 400;
+}

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect
+        width="64"
+        height="64"
+        rx="12"
+        fill="#292929"
+    /><path
+        d="m12 16 10 15 10-15m-10 15v17m16 0V16h8q14 0 0 16h-8m8 0 9 16"
+        fill="none"
+        stroke="#ff9900"
+        stroke-width="4"
+    /></svg>

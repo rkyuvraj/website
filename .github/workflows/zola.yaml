@@ -1,0 +1,53 @@
+name: Zola Pages
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - name: Install Zola 0.23.6
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 https://github.com/getzola/zola/releases/download/v0.23.6/zola-v0.23.6-x86_64-unknown-linux-gnu.tar.gz -o "$RUNNER_TEMP/zola.tar.gz"
+          # SHA-256 from the official GitHub release asset digest.
+          echo "8f5132b3522412d04e395e0b25f6d68613ad272a873e54a2b3ebf664873024a4  $RUNNER_TEMP/zola.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/zola.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+      - uses: actions/configure-pages@v6
+      - name: Validate published descriptions
+        run: ./scripts/check-descriptions.sh
+      - name: Check content and internal links
+        run: zola check --skip-external-links
+      - name: Build
+        run: zola build
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: public
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
